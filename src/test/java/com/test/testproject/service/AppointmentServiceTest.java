@@ -1,6 +1,8 @@
 package com.test.testproject.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -74,6 +76,7 @@ public class AppointmentServiceTest {
 			assertEquals("Doctor Id is Invalid", e.getMessage());
 		}
 
+		verify(appointmentRepository,times(1)).findByDoctor(d1);
 	}
 }
 
