@@ -33,9 +33,11 @@ public class AppointmentServiceTest {
 	private AppointmentRepository appointmentRepository;
 	@Mock
 	private DoctorService doctorService;
+	@Mock
+	private PatientService patientService;
 	
 	Doctor d1,d2;
-	DoctorPatient dp1,dp2,dp3;
+	DoctorPatient dp1,dp2,dp3,dp4;
 	Patient p1,p2,p3;
 	
 	@BeforeEach
@@ -48,6 +50,7 @@ public class AppointmentServiceTest {
 		dp1 = new DoctorPatient(1,LocalDate.of(2025, 04, 15), d1, p1);
 		dp2 = new DoctorPatient(2,LocalDate.of(2025, 04, 15), d1, p2);
 		dp3 = new DoctorPatient(3,LocalDate.of(2025, 04, 15), d2, p3);	
+		dp4 = new DoctorPatient(3,null, null, null);	
 	}
 
 	@Test
@@ -77,6 +80,39 @@ public class AppointmentServiceTest {
 		}
 
 		verify(appointmentRepository,times(1)).findByDoctor(d1);
+	}
+	@Test
+	public void addAppointmentTest() {
+		//usecase :  1 (correct output)
+		when(appointmentRepository.save(dp1)).thenReturn(dp1);
+		try {
+			when(doctorService.getById(1)).thenReturn(d1);
+			when(patientService.getById(1)).thenReturn(p1);
+		} catch (InvalidIdException e) {
+		}
+		try {
+			assertEquals(dp1,appointmentService.addAppointment(dp1, 1, 1));
+		} catch (InvalidIdException e) {		}
+        //check that patient is added
+		assertEquals(p1,dp1.getPatient());
+		//check that doctor is added
+		assertEquals(d1,dp1.getDoctor());
+		
+		//usecase : 2 (exception throws)
+		try {
+			when(doctorService.getById(10)).thenThrow(new InvalidIdException("Doctor Id is Invalid"));
+			assertEquals(dp1,appointmentService.addAppointment(dp1, 10, 1));
+		} catch (InvalidIdException e) {	
+			assertEquals("Doctor Id is Invalid", e.getMessage());
+		}
+		
+		//usecase : 3 (exception throws)
+		try {
+			when(patientService.getById(10)).thenThrow(new InvalidIdException("Patient Id is Invalid"));
+			assertEquals(dp1,appointmentService.addAppointment(dp1, 1, 10));
+		} catch (InvalidIdException e) {	
+			assertEquals("Patient Id is Invalid", e.getMessage());
+		}
 	}
 }
 
