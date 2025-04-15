@@ -84,24 +84,24 @@ public class AppointmentServiceTest {
 	@Test
 	public void addAppointmentTest() {
 		//usecase :  1 (correct output)
-		when(appointmentRepository.save(dp1)).thenReturn(dp1);
+		when(appointmentRepository.save(dp4)).thenReturn(dp4);
 		try {
 			when(doctorService.getById(1)).thenReturn(d1);
 			when(patientService.getById(1)).thenReturn(p1);
 		} catch (InvalidIdException e) {
 		}
 		try {
-			assertEquals(dp1,appointmentService.addAppointment(dp1, 1, 1));
+			assertEquals(dp4,appointmentService.addAppointment(dp4, 1, 1));
 		} catch (InvalidIdException e) {		}
         //check that patient is added
-		assertEquals(p1,dp1.getPatient());
+		assertEquals(p1,dp4.getPatient());
 		//check that doctor is added
-		assertEquals(d1,dp1.getDoctor());
+		assertEquals(d1,dp4.getDoctor());
 		
 		//usecase : 2 (exception throws)
 		try {
 			when(doctorService.getById(10)).thenThrow(new InvalidIdException("Doctor Id is Invalid"));
-			assertEquals(dp1,appointmentService.addAppointment(dp1, 10, 1));
+			assertEquals(dp4,appointmentService.addAppointment(dp4, 10, 1));
 		} catch (InvalidIdException e) {	
 			assertEquals("Doctor Id is Invalid", e.getMessage());
 		}
@@ -109,7 +109,7 @@ public class AppointmentServiceTest {
 		//usecase : 3 (exception throws)
 		try {
 			when(patientService.getById(10)).thenThrow(new InvalidIdException("Patient Id is Invalid"));
-			assertEquals(dp1,appointmentService.addAppointment(dp1, 1, 10));
+			assertEquals(dp4,appointmentService.addAppointment(dp4, 1, 10));
 		} catch (InvalidIdException e) {	
 			assertEquals("Patient Id is Invalid", e.getMessage());
 		}
